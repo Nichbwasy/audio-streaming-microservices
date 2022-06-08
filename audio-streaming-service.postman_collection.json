@@ -1,0 +1,640 @@
+{
+	"info": {
+		"_postman_id": "9dc0ff0b-cf01-4f4a-8eba-6430aa73fb11",
+		"name": "audio-streaming-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "autorization",
+			"item": [
+				{
+					"name": "/login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:9191/login",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "repeatPassword",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "admin@somemail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8080/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/login",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/songs",
+			"item": [
+				{
+					"name": "/songs/{id}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "/songs",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTEyMzkxNTN9.rvr7v9XKvHZBKpL4YFmZhqTRVkdW2pZwtuAiNCBrIjk",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Gothic Storm Music - From Small Beginnings.mp3",
+									"type": "text"
+								},
+								{
+									"key": "year",
+									"value": "2000",
+									"type": "text"
+								},
+								{
+									"key": "notes",
+									"value": "Song notes.",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/Vadzim_Yarosh/Downloads/Gothic Storm Music - From Small Beginnings.mp3"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:9191/songs",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"songs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/songs/{id}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/songs/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"songs",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/songs/album/{albumId}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwNDo4MDg0L2xvZ2luIiwiZXhwIjoxNjUyOTYyNzYzfQ.zUj3Tk0xWjWpvLqKtYQse0TNuv7LXEeszvxbsuJ_q0Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9191/songs/album/1",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"songs",
+								"album",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/songs/album/{albumId}/delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8083/songs/album/1/delete",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"songs",
+								"album",
+								"1",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/songs",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "genres",
+			"item": [
+				{
+					"name": "/genres",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTAyODcwMDZ9.zXNqJ8RQzlWKmOUlJZmfjrgebL7fLd2xo7y1Bngjv5A",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:9191/genres",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/genres",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Rock",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:9191/genres",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"genres"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "P",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/genres",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:9191/genres",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"genres"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "artist",
+			"item": [
+				{
+					"name": "/artists/{id}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTAyODcwMDZ9.zXNqJ8RQzlWKmOUlJZmfjrgebL7fLd2xo7y1Bngjv5A",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:9191/artists",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"artists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/artists",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Artist2",
+									"type": "text"
+								},
+								{
+									"key": "notes",
+									"value": "Some underground artist2.",
+									"type": "text"
+								},
+								{
+									"key": "genresIds",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:9191/artists",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"artists"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "albums",
+			"item": [
+				{
+					"name": "/albums",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTIxODcwOTF9.SXkoZLY6z0_UORdgryfgSx7fGfNzytjjhs6Ygc_5J4s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Album4",
+									"type": "text"
+								},
+								{
+									"key": "year",
+									"value": "2012",
+									"type": "text"
+								},
+								{
+									"key": "notes",
+									"value": "Some notes for album #2.",
+									"type": "text"
+								},
+								{
+									"key": "artistId",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:9191/albums",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"albums"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/albums/{id}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTIyNzYyNDF9.n4R1n-8AnCV_MSm7WAB_z106pGYnF8C67JaG7fxFUH0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTAyODcwMDZ9.zXNqJ8RQzlWKmOUlJZmfjrgebL7fLd2xo7y1Bngjv5A",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "localhost:9191/albums/1",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"albums",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/albums/{id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTIyNzYyNDF9.n4R1n-8AnCV_MSm7WAB_z106pGYnF8C67JaG7fxFUH0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "22Album22"
+								},
+								{
+									"key": "year",
+									"value": "2020"
+								},
+								{
+									"key": "notes",
+									"value": "Some notes for album %232."
+								},
+								{
+									"key": "artistId",
+									"value": "1"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:9191/albums/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"albums",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/albums/{id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODQvbG9naW4iLCJleHAiOjE2NTIyNzYyNDF9.n4R1n-8AnCV_MSm7WAB_z106pGYnF8C67JaG7fxFUH0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "id",
+									"value": "4",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8082/albums",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"albums"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/albums",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIkFETUlOIiwiVVNFUiJdLCJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwNDo4MDg0L2xvZ2luIiwiZXhwIjoxNjUyOTYyNzYzfQ.zUj3Tk0xWjWpvLqKtYQse0TNuv7LXEeszvxbsuJ_q0Y",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:9191/albums",
+							"host": [
+								"localhost"
+							],
+							"port": "9191",
+							"path": [
+								"albums"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/test",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "TEST_SONG",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/Users/Vadzim_Yarosh/Downloads/minio_light_cir_sm-1.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/test/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"test",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

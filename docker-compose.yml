@@ -1,0 +1,171 @@
+version: '3'
+
+services:
+  postgres-db:
+    image: postgres:14
+    container_name: postgres-db
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+      - ./postgres:/data/postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_MULTIPLE_DATABASES=artists,albums,songs,users
+      - PGDATA=/data/postgres
+
+    ports:
+      - 5432:5432
+    restart: always
+
+  pgadmin4:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    links:
+      - postgres-db
+
+  minio:
+    image: bitnami/minio:latest
+    container_name: minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_DEFAULT_BUCKETS=audio:policy,testbucket
+    volumes:
+      - ./minio/data:/minio/data
+    restart: always
+
+  activemq:
+    image: rmohr/activemq:5.15.2
+    container_name: activemq
+    ports:
+      - 8161:8161
+      - 61616:61616
+    restart: always
+    volumes:
+      - ./activemq/data:/activemq/data
+      - ./activemq/conf:/activemq/conf
+
+  server-microservice:
+    container_name: server-microservice
+    build:
+      context: ./server-microservice
+      dockerfile: Dockerfile
+    ports:
+      - 8761:8761
+    restart: always
+    links:
+      - postgres-db
+
+  api-gateway-microservice:
+    container_name: api-gateway-microservice
+    build:
+      context: ./api-gateway-microservice
+      dockerfile: Dockerfile
+    ports:
+      - 9191:9191
+    environment:
+      - EUREKA_SERVICE_URL=server-microservice
+      - AUDIO_ARTISTS_SERVICE_GATEWAY_URI=http://artists-microservice:8081
+      - AUDIO_ALBUMS_SERVICE_GATEWAY_URI=http://albums-microservice:8082
+      - AUDIO_SONGS_SERVICE_GATEWAY_URI=http://songs-microservice:8083
+      - AUDIO_AUTHORIZATION_SERVICE_GATEWAY_URI=http://authorization-microservice:8084
+    restart: always
+    links:
+      - artists-microservice
+      - albums-microservice
+      - songs-microservice
+      - authorization-microservice
+
+  artists-microservice:
+    container_name: artists-microservice
+    build:
+      context: ./artists-microservice
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    environment:
+      - DB_URL=postgres-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - DB_NAME=artists
+      - EUREKA_SERVICE_URL=server-microservice
+      - EUREKA_DEFAULT_ZONE=http://server-microservice:8761/eureka
+    restart: always
+    links:
+      - postgres-db
+      - server-microservice
+
+  albums-microservice:
+    container_name: albums-microservice
+    build:
+      context: ./album-microservice
+      dockerfile: Dockerfile
+    ports:
+      - 8082:8082
+    environment:
+      - DB_URL=postgres-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - DB_NAME=albums
+      - EUREKA_SERVICE_URL=server-microservice
+      - EUREKA_DEFAULT_ZONE=http://server-microservice:8761/eureka
+    restart: always
+    links:
+      - postgres-db
+      - server-microservice
+
+  songs-microservice:
+    container_name: songs-microservice
+    build:
+      context: ./songs-microservice
+      dockerfile: Dockerfile
+    ports:
+      - 8083:8083
+    environment:
+      - DB_URL=postgres-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - DB_NAME=songs
+      - EUREKA_SERVICE_URL=server-microservice
+      - EUREKA_DEFAULT_ZONE=http://server-microservice:8761/eureka
+      - MINIO-SERVER-URI=minio
+      - MINIO_SERVER_ACCESS_KEY=minioadmin
+      - MINIO_SERVER_SECRET_KEY=minioadmin
+      - MINIO_SERVER_BUCKET_NAME=audio
+      - ACTIVEMQ_BROKER_URL=tcp://activemq:61616
+      - ACTIVEMQ_BROKER_USERNAME=admin
+      - ACTIVEMQ_BROKER_PASSWORD=admin
+    restart: always
+    links:
+      - postgres-db
+      - server-microservice
+      - activemq
+      - minio
+
+  authorization-microservice:
+    container_name: authorization-microservice
+    build:
+      context: ./authorization-microservice
+      dockerfile: Dockerfile
+    ports:
+      - 8084:8084
+    environment:
+      - DB_URL=postgres-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
+      - DB_NAME=users
+      - EUREKA_SERVICE_URL=server-microservice
+      - EUREKA_DEFAULT_ZONE=http://server-microservice:8761/eureka
+    restart: always
+    links:
+      - postgres-db
+      - server-microservice

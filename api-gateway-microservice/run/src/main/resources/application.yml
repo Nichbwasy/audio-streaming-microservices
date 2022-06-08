@@ -1,0 +1,36 @@
+server:
+  port: 9191
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    discovery:
+      enabled: true
+    gateway:
+      routes:
+        - id: ARTISTS-MICROSERVICE
+          uri: ${AUDIO_ARTISTS_SERVICE_GATEWAY_URI:lb://ARTISTS-MICROSERVICE}
+          predicates:
+            - Path=/artists/**, /genres/**
+        - id: ALBUMS-MICROSERVICE
+          uri: ${AUDIO_ALBUMS_SERVICE_GATEWAY_URI:lb://ALBUMS-MICROSERVICE}
+          predicates:
+            - Path=/albums/**
+        - id: SONGS-MICROSERVICE
+          uri: ${AUDIO_SONGS_SERVICE_GATEWAY_URI:lb://SONGS-MICROSERVICE}
+          predicates:
+            - Path=/songs/**
+        - id: AUTHORIZATION-MICROSERVICE
+          uri: ${AUDIO_AUTHORIZATION_SERVICE_GATEWAY_URI:lb://AUTHORIZATION-MICROSERVICE}
+          predicates:
+            - Path=/login/**, /logout/**, /register/**, /oauth/**
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://${EUREKA_SERVICE_URL:localhost}:8761/eureka/
+  instance:
+    prefer-ip-address: true
