@@ -3,7 +3,7 @@ package com.epam.audio.streaming.album.microservice.services;
 import com.epam.audio.streaming.album.microservice.exceptions.EntityNotExistsException;
 import com.epam.audio.streaming.album.microservice.exceptions.EntityValidationException;
 import com.epam.audio.streaming.album.microservice.models.Album;
-import com.epam.audio.streaming.album.microservice.services.dto.Artist;
+import com.epam.audio.streaming.artists.microservice.models.Artist;
 
 import java.util.List;
 

@@ -77,6 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     User user = oAuth2UserSecurityService.processOAuthPostLogin(oauthUser.getName(), oauthUser.getEmail());
                     UserDetails userDetails = securityService.loadUserByUsername(user.getUsername());
                     oAuth2UserSecurityService.successfulAuthentication(request, response, userDetails);
+
                 });
         http.addFilter(new JwtAuthenticationFilter(authenticationManagerBean(), securityService));
         http.addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);

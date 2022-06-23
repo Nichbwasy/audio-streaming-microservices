@@ -1,5 +1,7 @@
 package com.epam.audio.streaming.songs.microservice.services.implimentations;
 
+import com.epam.audio.streaming.album.microservice.clients.AlbumsApiClient;
+import com.epam.audio.streaming.album.microservice.models.Album;
 import com.epam.audio.streaming.songs.microservice.dao.repositories.SongRepository;
 import com.epam.audio.streaming.songs.microservice.dao.repositories.StorageRepository;
 import com.epam.audio.streaming.songs.microservice.dao.storages.ResourceStorage;
@@ -10,22 +12,15 @@ import com.epam.audio.streaming.songs.microservice.models.Resource;
 import com.epam.audio.streaming.songs.microservice.models.Song;
 import com.epam.audio.streaming.songs.microservice.models.Storage;
 import com.epam.audio.streaming.songs.microservice.services.SongsService;
-import com.epam.audio.streaming.songs.microservice.services.dto.Album;
-import com.epam.audio.streaming.songs.microservice.services.utils.JwtEntity;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +39,7 @@ public class SongServiceImpl implements SongsService {
     private ResourceStorage resourceStorage;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private AlbumsApiClient albumsApiClient;
 
     @SneakyThrows
     @Override
@@ -119,10 +114,8 @@ public class SongServiceImpl implements SongsService {
 
     @Override
     public List<Song> getSongsFromAlbum(Long albumId) {
-        String requestUri = "http://ALBUMS-MICROSERVICE/albums/" + albumId;
-        HttpEntity<String> jwtEntityArtists = JwtEntity.getJwtEntity(requestUri, Arrays.asList("ADMIN"));
-        ResponseEntity<Album> albumResponseEntity = restTemplate.exchange(requestUri, HttpMethod.GET, jwtEntityArtists, Album.class);
-        if (albumResponseEntity.getBody() != null) {
+        Album album = albumsApiClient.getAlbumById(albumId);
+        if (album != null) {
             List<Song> songs = songRepository.findAllByAlbumId(albumId);
             log.info("For album with id '{}' was found '{}' songs.", albumId, songs.size());
             return songs;
@@ -134,10 +127,7 @@ public class SongServiceImpl implements SongsService {
 
     @Override
     public Album getSongAlbum(Song song) throws EntityNotExistsException {
-        String requestUri = "http://ALBUMS-MICROSERVICE/albums/" + song.getAlbumId();
-        HttpEntity<String> jwtEntityArtists = JwtEntity.getJwtEntity(requestUri, Arrays.asList("ADMIN"));
-        ResponseEntity<Album> albumResponseEntity = restTemplate.exchange(requestUri, HttpMethod.GET, jwtEntityArtists, Album.class);
-        Album album = albumResponseEntity.getBody();
+        Album album = albumsApiClient.getAlbumById(song.getAlbumId());
         if (album != null) {
             log.info("Album has been received from albums-microservice.");
             return album;

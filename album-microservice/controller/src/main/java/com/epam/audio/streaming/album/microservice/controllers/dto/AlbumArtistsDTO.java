@@ -1,7 +1,7 @@
 package com.epam.audio.streaming.album.microservice.controllers.dto;
 
 import com.epam.audio.streaming.album.microservice.models.Album;
-import com.epam.audio.streaming.album.microservice.services.dto.Artist;
+import com.epam.audio.streaming.artists.microservice.models.Artist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

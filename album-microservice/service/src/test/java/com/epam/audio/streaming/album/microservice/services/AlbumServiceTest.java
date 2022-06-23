@@ -4,107 +4,120 @@ import com.epam.audio.streaming.album.microservice.dao.repositories.AlbumReposit
 import com.epam.audio.streaming.album.microservice.exceptions.EntityNotExistsException;
 import com.epam.audio.streaming.album.microservice.exceptions.album.AlbumNotExistsException;
 import com.epam.audio.streaming.album.microservice.models.Album;
-import com.epam.audio.streaming.album.microservice.services.dto.Artist;
-import com.epam.audio.streaming.album.microservice.services.implimentations.AlbumsServiceImpl;
+import com.epam.audio.streaming.album.microservice.services.config.AlbumsServiceTestsConfiguration;
+import com.epam.audio.streaming.artists.microservice.clients.ArtistsApiClient;
+import com.epam.audio.streaming.artists.microservice.models.Artist;
+import com.epam.audio.streaming.songs.microservice.client.SongsApiClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = AlbumsService.class)
+@Import(AlbumsServiceTestsConfiguration.class)
 @ExtendWith(SpringExtension.class)
 public class AlbumServiceTest {
 
     private final static Album testAlbum = new Album(1L, "Name", 2000, "Notes", 1L);
     private final static Artist testArtist = new Artist(1L,  "Arist Name", "Album notes", null);
+
+    @Autowired
+    private AlbumsService albumsService;
+
     @MockBean
     private AlbumRepository albumRepository;
 
     @MockBean
-    private RestTemplate restTemplate;
+    private ArtistsApiClient artistsApiClient;
 
-    @InjectMocks
-    private AlbumsServiceImpl albumsService;
+    @MockBean
+    private SongsApiClient songsApiClient;
 
     @Test
     public void addAlbumWithExistedArtistTest() {
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-                )).thenReturn(ResponseEntity.ok().body(testArtist));
         Mockito.when(albumRepository.save(testAlbum)).thenReturn(testAlbum);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenReturn(testArtist);
 
         Assertions.assertNotNull(albumsService.addAlbum(testAlbum));
     }
 
     @Test
     public void addAlbumWithNotExistedArtistTest() {
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-        )).thenReturn(ResponseEntity.internalServerError().body(null));
         Mockito.when(albumRepository.save(testAlbum)).thenReturn(testAlbum);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenThrow(EntityNotExistsException.class);
 
         Assertions.assertThrows(EntityNotExistsException.class, () -> albumsService.addAlbum(testAlbum));
     }
 
     @Test
+    public void addAlbumWithApiArtistExceptionTest() {
+        Mockito.when(albumRepository.save(testAlbum)).thenReturn(testAlbum);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenThrow(RuntimeException.class);
+
+        Assertions.assertThrows(RuntimeException.class, () -> albumsService.addAlbum(testAlbum));
+    }
+
+    @Test
+    public void addAlbumWithServiceExceptionTest() {
+        Mockito.when(albumRepository.save(testAlbum)).thenThrow(RuntimeException.class);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenReturn(testArtist);
+
+        Assertions.assertThrows(RuntimeException.class, () -> albumsService.addAlbum(testAlbum));
+    }
+
+    @Test
     public void updateAlbumTestWithExistedAlbumAndArtist() {
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-        )).thenReturn(ResponseEntity.ok().body(testArtist));
         Mockito.when(albumRepository.save(testAlbum)).thenReturn(testAlbum);
         Mockito.when(albumRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenReturn(testArtist);
 
         Assertions.assertNotNull(albumsService.updateAlbum(testAlbum));
     }
 
     @Test
     public void updateAlbumTestWithNotExistedAlbumAndExistedArtist() {
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-        )).thenReturn(ResponseEntity.ok().body(testArtist));
         Mockito.when(albumRepository.existsById(Mockito.anyLong())).thenReturn(false);
         Mockito.when(albumRepository.save(testAlbum)).thenReturn(testAlbum);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenReturn(testArtist);
 
-        Assertions.assertThrows(AlbumNotExistsException.class, () -> albumsService.updateAlbum(testAlbum));
+        Assertions.assertThrows(EntityNotExistsException.class, () -> albumsService.updateAlbum(testAlbum));
     }
 
     @Test
     public void updateAlbumTestWithExistedAlbumAndNotExistedArtist() {
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-        )).thenReturn(ResponseEntity.internalServerError().body(null));
         Mockito.when(albumRepository.existsById(1L)).thenReturn(true);
         Mockito.when(albumRepository.save(testAlbum)).thenReturn(testAlbum);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenThrow(EntityNotExistsException.class);
 
         Assertions.assertThrows(EntityNotExistsException.class, () -> albumsService.updateAlbum(testAlbum));
+    }
+
+    @Test
+    public void updateAlbumTestWithServiceException() {
+        Mockito.when(albumRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(albumRepository.save(testAlbum)).thenThrow(RuntimeException.class);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenReturn(testArtist);
+
+        Assertions.assertThrows(RuntimeException.class, () -> albumsService.updateAlbum(testAlbum));
+    }
+
+    @Test
+    public void updateAlbumTestWithArtistApiException() {
+        Mockito.when(albumRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(albumRepository.save(testAlbum)).thenReturn(testAlbum);
+        Mockito.when(artistsApiClient.getArtistById(1L)).thenThrow(RuntimeException.class);
+
+        Assertions.assertThrows(RuntimeException.class, () -> albumsService.updateAlbum(testAlbum));
     }
 
     @Test
@@ -124,25 +137,35 @@ public class AlbumServiceTest {
     }
 
     @Test
-    public void getAllAlbums() {
-        Mockito.when(albumRepository.findAll()).thenReturn(new ArrayList<>());
+    public void getAlbumWithServiceExceptionTest() {
+        Mockito.when(albumRepository.existsById(Mockito.anyLong())).thenReturn(false);
+        Mockito.when(albumRepository.findById(Mockito.anyLong())).thenThrow(RuntimeException.class);
+
+        Assertions.assertThrows(RuntimeException.class, () -> albumsService.getAlbum(1L));
+    }
+
+    @Test
+    public void getAllAlbumsTest() {
+        Mockito.when(albumRepository.findAll()).thenReturn(Arrays.asList(testAlbum));
 
         Assertions.assertNotNull(albumsService.getAllAlbums());
     }
 
     @Test
-    public void deleteExistedAlbums() {
+    public void getAllAlbumsWithServiceExceptionTest() {
+        Mockito.when(albumRepository.findAll()).thenThrow(RuntimeException.class);
+
+        Assertions.assertThrows(RuntimeException.class, () -> albumsService.getAllAlbums());
+    }
+
+    @Test
+    public void deleteExistedAlbumsTest() {
         List<Long> idsToDelete = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
 
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-        )).thenReturn(ResponseEntity.internalServerError().body(null));
         Mockito.when(albumRepository.existsById(1L)).thenReturn(true);
         Mockito.when(albumRepository.existsById(2L)).thenReturn(true);
         Mockito.when(albumRepository.existsById(3L)).thenReturn(true);
+        Mockito.when(songsApiClient.deleteSongByAlbumId(Mockito.anyLong())).thenReturn(Arrays.asList(1L, 2L));
         Mockito.doNothing().when(albumRepository).deleteById(Mockito.anyLong());
 
 
@@ -153,18 +176,13 @@ public class AlbumServiceTest {
     }
 
     @Test
-    public void deleteNotExistedAlbums() {
+    public void deleteNotExistedAlbumsTest() {
         List<Long> idsToDelete = new ArrayList<>(Arrays.asList(1L, 2L, 3L));
 
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-        )).thenReturn(ResponseEntity.internalServerError().body(null));
         Mockito.when(albumRepository.existsById(1L)).thenReturn(true);
         Mockito.when(albumRepository.existsById(2L)).thenReturn(false);
         Mockito.when(albumRepository.existsById(3L)).thenReturn(true);
+        Mockito.when(songsApiClient.deleteSongByAlbumId(Mockito.anyLong())).thenReturn(Arrays.asList(1L, 2L));
         Mockito.doNothing().when(albumRepository).deleteById(Mockito.anyLong());
 
         List<Long> listIds = albumsService.deleteAlbums(idsToDelete);
@@ -173,17 +191,19 @@ public class AlbumServiceTest {
     }
 
     @Test
-    public void deleteWithNullAlbums() {
-        Mockito.when(restTemplate.exchange(
-                Mockito.anyString(),
-                Mockito.any(HttpMethod.class),
-                Mockito.any(HttpEntity.class),
-                Mockito.any(Class.class)
-        )).thenReturn(ResponseEntity.internalServerError().body(null));
+    public void deleteWithNullAlbumsTest() {
         Mockito.when(albumRepository.existsById(Mockito.anyLong())).thenReturn(true);
         Mockito.doNothing().when(albumRepository).deleteById(Mockito.anyLong());
 
         Assertions.assertThrows(NullPointerException.class, () -> albumsService.deleteAlbums(null));
+    }
+
+    @Test
+    public void deleteAlbumsWithServiceExceptionTest() {
+        Mockito.when(albumRepository.existsById(Mockito.anyLong())).thenReturn(true);
+        Mockito.doThrow(RuntimeException.class).when(albumRepository).deleteById(Mockito.anyLong());
+
+        Assertions.assertThrows(RuntimeException.class, () -> albumsService.deleteAlbums(null));
     }
 
 }

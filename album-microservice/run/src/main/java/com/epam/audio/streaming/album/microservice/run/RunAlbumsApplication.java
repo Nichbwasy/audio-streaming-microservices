@@ -15,7 +15,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.epam.audio.streaming.album.microservice")
 @EntityScan(basePackages = "com.epam.audio.streaming.album.microservice")
-@ComponentScan(basePackages = {"com.epam.audio.streaming.album.microservice"})
+@ComponentScan(basePackages = {
+        "com.epam.audio.streaming.album.microservice",
+        "com.epam.audio.streaming.artists.microservice.clients",
+        "com.epam.audio.streaming.songs.microservice.client"
+})
 public class RunAlbumsApplication {
 
     @Bean

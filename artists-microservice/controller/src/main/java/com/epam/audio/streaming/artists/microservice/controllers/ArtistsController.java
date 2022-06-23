@@ -5,6 +5,7 @@ import com.epam.audio.streaming.artists.microservice.exceptions.EntityNotExistsE
 import com.epam.audio.streaming.artists.microservice.exceptions.EntityValidationException;
 import com.epam.audio.streaming.artists.microservice.models.Artist;
 import com.epam.audio.streaming.artists.microservice.service.ArtistsService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,8 @@ public class ArtistsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateArtist(@PathVariable Long id, @Valid @ModelAttribute ArtistFormDTO formData) throws EntityValidationException, EntityNotExistsException {
+    @SneakyThrows
+    public ResponseEntity<?> updateArtist(@PathVariable Long id, @Valid @ModelAttribute ArtistFormDTO formData) {
         artistsService.updateArtist(id, formData.getName(), formData.getNotes(), formData.getGenresIds());
         log.info("Arist with id '{}' has been updated.", id);
         return ResponseEntity.ok().body(null);
@@ -47,7 +49,7 @@ public class ArtistsController {
         return ResponseEntity.ok().body(deletedIds);
     }
 
-    @GetMapping
+    @GetMapping("/filter")
     public ResponseEntity<List<Artist>> getFilteredArtists(@RequestParam String name, @RequestParam List<String> genreNames) {
         List<Artist> artists = artistsService.getFilteredArtists(name, genreNames);
         log.info("Filtered artists was found.");

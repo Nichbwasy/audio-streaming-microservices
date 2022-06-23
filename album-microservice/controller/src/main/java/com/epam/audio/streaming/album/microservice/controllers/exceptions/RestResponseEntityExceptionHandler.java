@@ -1,6 +1,8 @@
 package com.epam.audio.streaming.album.microservice.controllers.exceptions;
 
+import com.epam.audio.streaming.album.microservice.exceptions.EntityAlreadyExistsException;
 import com.epam.audio.streaming.album.microservice.exceptions.EntityNotExistsException;
+import com.epam.audio.streaming.album.microservice.exceptions.EntityValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,27 @@ import java.util.Map;
 @Slf4j
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(value = {EntityAlreadyExistsException.class})
+    protected ResponseEntity<Object> alreadyExist(Exception e, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        log.error("Entity already exist exception! {}", e.getMessage());
+
+        body.put("message", String.format("Entity already exist exception! %s", e.getMessage()));
+        body.put("time", LocalDateTime.now());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {EntityValidationException.class})
+    protected ResponseEntity<Object> validationException(Exception e, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        log.error("Validation exception! {}", e.getMessage());
+
+        body.put("message", String.format("Validation exception! %s", e.getMessage()));
+        body.put("time", LocalDateTime.now());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(value = {EntityNotExistsException.class})
     protected ResponseEntity<Object> notFound(Exception e, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();

@@ -1,19 +1,18 @@
 package com.epam.audio.streaming.album.microservice.controllers;
 
 import com.epam.audio.streaming.album.microservice.controllers.dto.AlbumArtistsDTO;
-import com.epam.audio.streaming.album.microservice.services.dto.Artist;
-import com.epam.audio.streaming.album.microservice.services.utils.JwtEntity;
 import com.epam.audio.streaming.album.microservice.exceptions.EntityNotExistsException;
 import com.epam.audio.streaming.album.microservice.exceptions.EntityValidationException;
 import com.epam.audio.streaming.album.microservice.models.Album;
 import com.epam.audio.streaming.album.microservice.services.AlbumsService;
+import com.epam.audio.streaming.artists.microservice.models.Artist;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @RestController

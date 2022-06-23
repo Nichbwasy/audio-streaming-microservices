@@ -1,8 +1,8 @@
 package com.epam.audio.streaming.songs.microservice.services;
 
+import com.epam.audio.streaming.album.microservice.models.Album;
 import com.epam.audio.streaming.songs.microservice.exceptions.EntityNotExistsException;
 import com.epam.audio.streaming.songs.microservice.models.Song;
-import com.epam.audio.streaming.songs.microservice.services.dto.Album;
 
 import java.io.InputStream;
 import java.util.List;

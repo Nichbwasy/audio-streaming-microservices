@@ -5,19 +5,15 @@ import com.epam.audio.streaming.album.microservice.exceptions.EntityNotExistsExc
 import com.epam.audio.streaming.album.microservice.exceptions.album.AlbumNotExistsException;
 import com.epam.audio.streaming.album.microservice.models.Album;
 import com.epam.audio.streaming.album.microservice.services.AlbumsService;
-import com.epam.audio.streaming.album.microservice.services.dto.Artist;
-import com.epam.audio.streaming.album.microservice.services.utils.JwtEntity;
+import com.epam.audio.streaming.artists.microservice.clients.ArtistsApiClient;
+import com.epam.audio.streaming.artists.microservice.models.Artist;
+import com.epam.audio.streaming.songs.microservice.client.SongsApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +25,10 @@ public class AlbumsServiceImpl implements AlbumsService {
     private AlbumRepository albumRepository;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private ArtistsApiClient artistsApiClient;
+
+    @Autowired
+    private SongsApiClient songsApiClient;
 
     @Override
     public Album addAlbum(Album album) throws EntityNotExistsException {
@@ -86,9 +85,7 @@ public class AlbumsServiceImpl implements AlbumsService {
             try {
                 if (albumRepository.existsById(id)) {
                     log.info("Deleting all songs belongs to album with id '{}'...", id);
-                    String requestUri = "http://SONGS-MICROSERVICE/songs/album/" + id + "/delete";
-                    HttpEntity<String> jwtEntitySongs = JwtEntity.getJwtEntity(requestUri, Arrays.asList("ADMIN"));
-                    List<Long> idsOfDeletedSongs = (List<Long>) restTemplate.exchange(requestUri, HttpMethod.DELETE, jwtEntitySongs, List.class).getBody();
+                    List<Long> idsOfDeletedSongs = songsApiClient.deleteSongByAlbumId(id);
                     log.info("Songs with ids '{}' has been removed.", idsOfDeletedSongs);
 
                     albumRepository.deleteById(id);
@@ -107,10 +104,7 @@ public class AlbumsServiceImpl implements AlbumsService {
 
     @Override
     public Artist getAlbumArtist(Album album) throws EntityNotExistsException {
-        String requestUri = "http://ARTISTS-MICROSERVICE/artists/" + album.getArtistId();
-        HttpEntity<String> jwtEntityArtists = JwtEntity.getJwtEntity(requestUri, Arrays.asList("ADMIN"));
-        ResponseEntity<Artist> artistResponseEntity = restTemplate.exchange(requestUri, HttpMethod.GET, jwtEntityArtists, Artist.class);
-        Artist artist = artistResponseEntity.getBody();
+        Artist artist = artistsApiClient.getArtistById(album.getArtistId());
         if (artist != null) {
             log.info("Artist has been received from artist-microservice.");
             return artist;

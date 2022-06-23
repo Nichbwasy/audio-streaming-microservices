@@ -19,6 +19,7 @@
         <module>exception</module>
         <module>controller</module>
         <module>run</module>
+        <module>client</module>
     </modules>
 
     <packaging>pom</packaging>

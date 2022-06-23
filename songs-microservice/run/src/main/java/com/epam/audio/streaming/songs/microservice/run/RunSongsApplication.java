@@ -13,9 +13,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableEurekaClient
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.epam.audio.streaming.songs.microservice")
-@EntityScan(basePackages = "com.epam.audio.streaming.songs.microservice")
-@ComponentScan(basePackages = {"com.epam.audio.streaming.songs.microservice"})
+@EnableJpaRepositories(basePackages = {"com.epam.audio.streaming.songs.microservice"})
+@EntityScan(basePackages = {"com.epam.audio.streaming.songs.microservice"})
+@ComponentScan(basePackages = {
+        "com.epam.audio.streaming.songs.microservice",
+        "com.epam.audio.streaming.album.microservice.clients"
+})
 public class RunSongsApplication {
 
     @Bean

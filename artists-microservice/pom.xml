@@ -15,9 +15,10 @@
         <module>model</module>
         <module>dao</module>
         <module>service</module>
-        <module>exceptions</module>
         <module>controller</module>
         <module>run</module>
+        <module>client</module>
+        <module>exception</module>
     </modules>
 
     <packaging>pom</packaging>

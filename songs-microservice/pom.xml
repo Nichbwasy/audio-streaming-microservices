@@ -19,6 +19,7 @@
         <module>exception</module>
         <module>controller</module>
         <module>run</module>
+        <module>client</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -30,6 +31,13 @@
     </properties>
 
     <dependencies>
+        <!-- ALBUMS API -->
+        <dependency>
+            <groupId>com.epam.audio-streaming.album-microservice</groupId>
+            <artifactId>model</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
