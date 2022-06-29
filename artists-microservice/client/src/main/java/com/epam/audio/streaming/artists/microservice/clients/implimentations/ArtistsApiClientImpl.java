@@ -1,9 +1,9 @@
 package com.epam.audio.streaming.artists.microservice.clients.implimentations;
 
 import com.epam.audio.streaming.artists.microservice.clients.ArtistsApiClient;
-import com.epam.audio.streaming.artists.microservice.clients.utils.JwtEntity;
 import com.epam.audio.streaming.artists.microservice.exceptions.api.artists.ArtistsMicroserviceApiException;
 import com.epam.audio.streaming.artists.microservice.models.Artist;
+import com.epam.audio.streaming.common.utils.jwt.JwtEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

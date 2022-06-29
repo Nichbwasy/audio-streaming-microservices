@@ -15,6 +15,7 @@
         <module>authorization-microservice</module>
         <module>server-microservice</module>
         <module>songs-microservice</module>
+        <module>common</module>
     </modules>
 
     <parent>

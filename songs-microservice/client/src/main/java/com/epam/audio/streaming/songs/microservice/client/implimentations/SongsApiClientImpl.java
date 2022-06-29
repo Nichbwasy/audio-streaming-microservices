@@ -1,6 +1,6 @@
 package com.epam.audio.streaming.songs.microservice.client.implimentations;
 
-import com.epam.audio.streaming.songs.microservice.client.utils.JwtEntity;
+import com.epam.audio.streaming.common.utils.jwt.JwtEntity;
 import com.epam.audio.streaming.songs.microservice.client.SongsApiClient;
 import com.epam.audio.streaming.songs.microservice.exceptions.api.songs.SongsMicroserviceApiException;
 import lombok.extern.slf4j.Slf4j;
